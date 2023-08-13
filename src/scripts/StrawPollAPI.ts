@@ -77,12 +77,15 @@ let pollOps: any = {
   type: "ranking", // API Documentatin is wrong, this is the correct value
 };
 
-const starPollClient = axios.create({
-  baseURL: "https://api.strawpoll.com/v3",
-  headers: {
-    "X-API-Key": getCookie("StrawPoll_API_KEY"),
-  },
-});
+const getStrawPollClient = () => {
+  const starPollClient = axios.create({
+    baseURL: "https://api.strawpoll.com/v3",
+    headers: {
+      "X-API-Key": getCookie("StrawPoll_API_KEY"),
+    },
+  });
+  return starPollClient;
+};
 
 const createPoll = async (
   deadlineSeconds: number,
@@ -100,10 +103,12 @@ const createPoll = async (
       value: entry.name,
     };
   });
-  return await starPollClient.post("/polls", pollOps).then((res) => {
-    const pollId = res.data.id;
-    return pollId;
-  });
+  return await getStrawPollClient()
+    .post("/polls", pollOps)
+    .then((res) => {
+      const pollId = res.data.id;
+      return pollId;
+    });
 };
 
 const getPollResults = async (pollId: string) => {
@@ -111,7 +116,7 @@ const getPollResults = async (pollId: string) => {
     if (!pollId || pollId === "") {
       throw new Error("No pollId provided");
     }
-    return (await starPollClient.get(`/polls/${pollId}/results`)).data;
+    return (await getStrawPollClient().get(`/polls/${pollId}/results`)).data;
   } catch (err) {
     console.log(err);
     return [];
@@ -125,6 +130,20 @@ const getPollResultsArray = async (pollId: string) => {
     return [];
   }
 };
+
+async function checkIfValidAPIKey(pollId: string): Promise<boolean> {
+  try {
+    const res = await getStrawPollClient().get("/users/@me");
+    if (res.status === 200) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log("Error Fetching API Key", error);
+    return false;
+  }
+}
 
 export interface ResultEntry {
   description: string;
@@ -141,7 +160,7 @@ export interface ResultEntry {
 }
 const StrawPollAPI = {
   getPollResultsArray,
-
+  checkIfValidAPIKey,
   createPoll,
   pollOps,
 };

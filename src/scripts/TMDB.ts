@@ -146,6 +146,21 @@ class TMDBAPI {
       return null;
     }
   }
+
+  static async checkIfValidAPIKey(apiKey: string): Promise<boolean> {
+    try {
+      const response = await axios.get(`${TMDB_BASE_URL}/movie/550`, {
+        params: {
+          api_key: apiKey,
+        },
+      });
+
+      return response.status === 200;
+    } catch (error) {
+      console.log("Error Fetching API Key", error);
+      return false;
+    }
+  }
 }
 
 export default TMDBAPI;

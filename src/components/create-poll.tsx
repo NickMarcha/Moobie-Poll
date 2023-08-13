@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useImperativeHandle } from "react";
 import useArray from "../hooks/useArray";
 import StrawPollAPI from "../scripts/StrawPollAPI";
 import { sendToClip } from "../scripts/util";
+import { useCookies } from "react-cookie";
 
 type createPollProps = {};
 
@@ -37,11 +38,43 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
       setCountDownDate(newCountdownDate);
       setPollID(newPollID);
     }
+    const [StrawPoll_API_KEY, setStrawPoll_API_KEY] = useCookies([
+      "StrawPoll_API_KEY",
+    ]);
+    const [StrawPollisValid, setStrawPollisValid] = useState(false);
+
+    const StrawPoll_APIPromise = useRef<null | Promise<boolean>>(null);
+    useEffect(() => {
+      async function checkIfValidAPIKey(key: string) {
+        const checkPromise = StrawPollAPI.checkIfValidAPIKey(key);
+        StrawPoll_APIPromise.current = checkPromise;
+        const bResult = await checkPromise;
+        if (StrawPoll_APIPromise.current === checkPromise) {
+          setStrawPollisValid(bResult);
+        } else {
+        }
+      }
+
+      checkIfValidAPIKey(StrawPoll_API_KEY.StrawPoll_API_KEY);
+    }, [StrawPoll_API_KEY]);
 
     return (
       <div>
         <div className="flex flex-row">
-          <h1 className="text-4xl">Create Poll</h1>
+          <h1 className="text-4xl">
+            Create Poll
+            {StrawPollisValid ? (
+              ""
+            ) : (
+              <span
+                className="ml-4 text-xl bg-gray-500 text-white font-bold rounded"
+                title="You won't be able to see results early if you don't have a valid API key"
+              >
+                {" "}
+                (as guest)
+              </span>
+            )}
+          </h1>
         </div>
 
         <div className="flex flex-col m-5">
@@ -59,7 +92,8 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
         </div>
         <div className="flex flex-row ml-4">
           <button
-            className="bg-purple-500 hover:bg-purple-700  text-white font-bold py-1 px-2 rounded"
+            disabled={array.length < 2}
+            className="bg-purple-500 disabled:bg-[#334155] disabled:cursor-not-allowed hover:bg-purple-700  text-white font-bold py-1 px-2 rounded"
             onClick={createPoll}
           >
             Create Poll

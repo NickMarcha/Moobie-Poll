@@ -133,14 +133,8 @@ const CreatePollPage = () => {
           <h1 className="text-4xl">Please set your TMDB API Key</h1>
         </div>
       )}
-      {!getCookie("StrawPoll_API_KEY") && (
-        <div>
-          <h1 className="text-4xl">Please set your StrawPoll API Key</h1>
-        </div>
-      )}
-      {getCookie("StrawPoll_API_KEY") && (
-        <CreatePoll ref={createPollRef}></CreatePoll>
-      )}
+
+      <CreatePoll ref={createPollRef}></CreatePoll>
 
       {getCookie("TMDB_API_KEY") && (
         <div>
