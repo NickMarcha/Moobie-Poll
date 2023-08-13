@@ -8,9 +8,14 @@ import TMDBAPI from "../scripts/TMDB";
 type tvtShowPaneProps = {
   tvShow: TvShow;
   lastWatchedData: LastWatchedEntry[];
+  addToPollHandler: (tvShow: TvShow) => void;
 };
 
-const TvShowPane = ({ tvShow, lastWatchedData }: tvtShowPaneProps) => {
+const TvShowPane = ({
+  tvShow,
+  lastWatchedData,
+  addToPollHandler,
+}: tvtShowPaneProps) => {
   const [tvShowGenreList, setTvShowGenreList] = useState<
     { id: number; name: string }[]
   >([]);
@@ -99,7 +104,10 @@ const TvShowPane = ({ tvShow, lastWatchedData }: tvtShowPaneProps) => {
             tvShow={tvShow}
             lastWatchedData={lastWatchedData}
           />
-          <button className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+          <button
+            className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => addToPollHandler(tvShow)}
+          >
             Add to Poll
           </button>
         </div>

@@ -9,9 +9,14 @@ import PlaceHolder from "../images/PlaceHolder.png";
 type moviePaneProps = {
   movie: Movie;
   lastWatchedData: LastWatchedEntry[];
+  addToPollHandler: (movie: Movie) => void;
 };
 
-const MoviePane = ({ movie, lastWatchedData }: moviePaneProps) => {
+const MoviePane = ({
+  movie,
+  lastWatchedData,
+  addToPollHandler,
+}: moviePaneProps) => {
   const [movieGenreList, setMovieGenreList] = useState<
     { id: number; name: string }[]
   >([]);
@@ -96,7 +101,10 @@ const MoviePane = ({ movie, lastWatchedData }: moviePaneProps) => {
             TMDB
           </button>
           <LastWatchedButton movie={movie} lastWatchedData={lastWatchedData} />
-          <button className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+          <button
+            className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => addToPollHandler(movie)}
+          >
             Add to Poll
           </button>
         </div>

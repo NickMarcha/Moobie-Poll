@@ -8,8 +8,11 @@ import LastWatchedEntry from "../types/LastWatchedEntry";
 import TMDBAPI from "../scripts/TMDB";
 import { getCookie } from "../scripts/cookieUtils";
 import { FindYoutubeVideoId, getYoutubeVideoTitle } from "../scripts/util";
+import CreatePoll, { AddToPollHandle } from "../components/create-poll";
 
 const CreatePollPage = () => {
+  const createPollRef = React.useRef<AddToPollHandle>(null);
+
   const [TMDBMovieOptions, setTMDBMovieOptions] = React.useState<Movie[]>([]);
   const [TMDBTVShowOptions, setTMDBTVShowOptions] = React.useState<TvShow[]>(
     []
@@ -82,6 +85,21 @@ const CreatePollPage = () => {
     fetchWatchedData();
   }, []);
 
+  function addToPoll(entry: string) {
+    if (createPollRef.current) {
+      createPollRef.current.addToPoll(entry);
+    }
+  }
+  function addToPollMovie(movie: Movie) {
+    addToPoll(`Movie: ${movie.title} (${movie.release_date})`);
+  }
+  function addToPollTVShow(tvShow: TvShow) {
+    addToPoll(`TV Show: ${tvShow.name} (${tvShow.first_air_date})`);
+  }
+  function addToPollYoutube(youtubeTitle: string) {
+    addToPoll(`Youtube: ${youtubeTitle}`);
+  }
+
   return (
     <>
       {!getCookie("TMDB_API_KEY") && (
@@ -94,6 +112,10 @@ const CreatePollPage = () => {
           <h1 className="text-4xl">Please set your StrawPoll API Key</h1>
         </div>
       )}
+      {getCookie("StrawPoll_API_KEY") && (
+        <CreatePoll ref={createPollRef}></CreatePoll>
+      )}
+
       {getCookie("TMDB_API_KEY") && (
         <div>
           {/* <h1 className="text-4xl">{TMDB_API_KEY.TMDB_API_KEY}</h1> */}
@@ -101,6 +123,7 @@ const CreatePollPage = () => {
           <h1 className="">Search Term: {searchTerm}</h1>
           <h1 className="">Movies length: {TMDBMovieOptions.length}</h1>
           <h1 className="">TV Shows length: {TMDBTVShowOptions.length}</h1> */}
+          <h1 className="text-4xl">Search for a Movie or TV Show</h1>
 
           <input
             className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
@@ -149,6 +172,7 @@ const CreatePollPage = () => {
                     key={key}
                     movie={option}
                     lastWatchedData={lastWatchedData}
+                    addToPollHandler={addToPollMovie}
                   />
                 ))}
               </div>
@@ -159,6 +183,7 @@ const CreatePollPage = () => {
                     key={key}
                     tvShow={option}
                     lastWatchedData={lastWatchedData}
+                    addToPollHandler={addToPollTVShow}
                   />
                 ))}
               </div>
@@ -181,6 +206,12 @@ const CreatePollPage = () => {
                   allowFullScreen
                 ></iframe>
               </div>
+              <button
+                className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => addToPollYoutube(youtubeTitle)}
+              >
+                Add to Poll
+              </button>
             </>
           )}
         </div>
