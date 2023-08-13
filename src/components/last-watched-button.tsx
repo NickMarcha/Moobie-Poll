@@ -172,7 +172,13 @@ const LastWatchedButton = ({
       >
         <div>
           <div className="flex flex-row justify-between">
-            <h1 className="text-5xl">{tvShow ? tvShow.name : movie?.title}</h1>
+            <h1 className="text-5xl">
+              {tvShow ? tvShow.name : movie?.title} (
+              {tvShow
+                ? tvShow.first_air_date.split("-")[0]
+                : movie?.release_date.split("-")[0]}
+              )
+            </h1>
             <div className="flex flex-row justify-between">
               <button
                 className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
@@ -190,7 +196,7 @@ const LastWatchedButton = ({
               </button>
             </div>
           </div>
-          <h1 className="text-3xl">Url Matches</h1>
+          <h1 className="text-3xl">IMDB Url Matches</h1>
           <table className="table-auto">
             <thead>
               <tr>
