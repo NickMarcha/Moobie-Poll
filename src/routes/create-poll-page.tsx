@@ -7,7 +7,11 @@ import TvShow from "../types/TvShow";
 import LastWatchedEntry from "../types/LastWatchedEntry";
 import TMDBAPI from "../scripts/TMDB";
 import { getCookie } from "../scripts/cookieUtils";
-import { FindYoutubeVideoId, getYoutubeVideoTitle } from "../scripts/util";
+import {
+  FindYoutubeVideoId,
+  getImdbIdFromUrl,
+  getYoutubeVideoTitle,
+} from "../scripts/util";
 import CreatePoll, { AddToPollHandle } from "../components/create-poll";
 
 const CreatePollPage = () => {
@@ -35,6 +39,7 @@ const CreatePollPage = () => {
       setIsSearching(false);
     }
     const youtubeVideoId = FindYoutubeVideoId(searchTerm);
+    const imdbId = getImdbIdFromUrl(searchTerm);
     if (youtubeVideoId) {
       setTMDBMovieOptions([]);
       setTMDBTVShowOptions([]);
@@ -44,6 +49,24 @@ const CreatePollPage = () => {
         setYoutubeTitle(youtubeTitle);
       } else {
         setYoutubeTitle("No Title Found");
+      }
+    } else if (imdbId) {
+      console.log(imdbId);
+      const result = await TMDBAPI.searchByImdbID(imdbId);
+      console.log(result);
+      if (result["media_type"] === "tv") {
+        setTMDBMovieOptions([]);
+        setTMDBTVShowOptions([result]);
+        setIsSearching(false);
+      } else if (result["media_type"] === "movie") {
+        setTMDBMovieOptions([result]);
+        setTMDBTVShowOptions([]);
+        setIsSearching(false);
+      } else {
+        setTMDBMovieOptions([]);
+        setTMDBTVShowOptions([]);
+        setIsSearching(false);
+        console.log("Unrecognized media type");
       }
     } else {
       console.log("Options Fetched from API");
