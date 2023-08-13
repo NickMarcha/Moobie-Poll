@@ -22,9 +22,13 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
       useArray<string>([]);
     const [pollID, setPollID] = React.useState<string>("");
     const [countDownDate, setCountDownDate] = React.useState(new Date());
-    const [deadline, setDeadline] = React.useState(180);
+    const [deadline, setDeadline] = React.useState<number | "">(180);
 
     async function createPoll() {
+      if (deadline === "") {
+        alert("Please enter a deadline");
+        return;
+      }
       const newPollID = await StrawPollAPI.createPoll(
         deadline,
         array.map((entry, index) => ({ id: index.toString(), name: entry }))
@@ -42,7 +46,7 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
 
         <div className="flex flex-col m-5">
           {array.map((entry, index) => (
-            <div className="flex flex-row m-1">
+            <div className="flex flex-row m-1" key={index}>
               <button
                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
                 onClick={() => remove(index)}
@@ -76,8 +80,13 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
             type="number"
             id="deadline"
             value={deadline}
-            defaultValue={deadline}
-            onChange={(e) => setDeadline(parseInt(e.target.value))}
+            onChange={(e) => {
+              if (e.target.value === "") {
+                setDeadline("");
+              } else {
+                setDeadline(parseInt(e.target.value));
+              }
+            }}
           />
           <label htmlFor="deadline" className="text-2xl">
             Deadline in seconds
