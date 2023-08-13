@@ -4,6 +4,7 @@ import useArray from "../hooks/useArray";
 import StrawPollAPI from "../scripts/StrawPollAPI";
 import { sendToClip } from "../scripts/util";
 import { useCookies } from "react-cookie";
+import CopyIcon from "../icons/copy-icon";
 
 type createPollProps = {};
 
@@ -12,8 +13,6 @@ export type AddToPollHandle = {
 };
 const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
   (props, ref) => {
-    //Happens so rarely that I don't want to make a new image for it
-    //return <img title="adult:false" src={WidePeepoHHappy} alt="not adult" />;
     useImperativeHandle(ref, () => ({
       addToPoll: (entry: string) => {
         push(entry);
@@ -38,9 +37,7 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
       setCountDownDate(newCountdownDate);
       setPollID(newPollID);
     }
-    const [StrawPoll_API_KEY, setStrawPoll_API_KEY] = useCookies([
-      "StrawPoll_API_KEY",
-    ]);
+    const [StrawPoll_API_KEY] = useCookies(["StrawPoll_API_KEY"]);
     const [StrawPollisValid, setStrawPollisValid] = useState(false);
 
     const StrawPoll_APIPromise = useRef<null | Promise<boolean>>(null);
@@ -91,6 +88,18 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
           ))}
         </div>
         <div className="flex flex-row ml-4">
+          <button
+            disabled={array.length < 1}
+            title="Copy all entries to clipboard"
+            className="bg-purple-500 disabled:bg-[#334155] disabled:cursor-not-allowed hover:bg-purple-700  text-white font-bold py-1 px-2 rounded"
+            onClick={() => {
+              const value = array.flatMap((entry) => entry + "\n").join("");
+              sendToClip(value);
+            }}
+          >
+            <CopyIcon />
+          </button>
+
           <button
             disabled={array.length < 2}
             className="bg-purple-500 disabled:bg-[#334155] disabled:cursor-not-allowed hover:bg-purple-700  text-white font-bold py-1 px-2 rounded"
