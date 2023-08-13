@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/Moobie-Poll/static/css/main.b0299908.css",
-    "main.js": "/Moobie-Poll/static/js/main.4e3cba95.js",
+    "main.css": "/Moobie-Poll/static/css/main.38a5ae2e.css",
+    "main.js": "/Moobie-Poll/static/js/main.8c44c2fd.js",
     "static/js/787.7456326c.chunk.js": "/Moobie-Poll/static/js/787.7456326c.chunk.js",
     "index.html": "/Moobie-Poll/index.html",
-    "main.b0299908.css.map": "/Moobie-Poll/static/css/main.b0299908.css.map",
-    "main.4e3cba95.js.map": "/Moobie-Poll/static/js/main.4e3cba95.js.map",
+    "main.38a5ae2e.css.map": "/Moobie-Poll/static/css/main.38a5ae2e.css.map",
+    "main.8c44c2fd.js.map": "/Moobie-Poll/static/js/main.8c44c2fd.js.map",
     "787.7456326c.chunk.js.map": "/Moobie-Poll/static/js/787.7456326c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.b0299908.css",
-    "static/js/main.4e3cba95.js"
+    "static/css/main.38a5ae2e.css",
+    "static/js/main.8c44c2fd.js"
   ]
 }
