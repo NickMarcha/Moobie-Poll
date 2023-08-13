@@ -102,6 +102,7 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
 
           <button
             disabled={array.length < 2}
+            title="Create a Ranked Choice Straw Poll with all entries"
             className="bg-purple-500 disabled:bg-[#334155] disabled:cursor-not-allowed hover:bg-purple-700  text-white font-bold py-1 px-2 rounded"
             onClick={createPoll}
           >
@@ -110,6 +111,7 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
           <button
             disabled={pollID === ""}
             onClick={() => window.open(`https://strawpoll.com/${pollID}`)}
+            title="Open the poll in new tab, right click to copy link"
             onContextMenu={(event) => {
               event.preventDefault();
               sendToClip(`https://strawpoll.com/${pollID}`);
