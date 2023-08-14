@@ -30,19 +30,19 @@ const CreatePollPage = () => {
 
   const [isSearching, setIsSearching] = React.useState<boolean>(false);
 
-  const [dynamicSearchTerm, setDynamicSearchTerm] = React.useState<string>("");
   const [searchTerm, setSearchTerm] = React.useState<string>("");
 
-  const handleSearch = async () => {
+  const handleSearch = async (sterm: string) => {
     console.log("Search Term Changed");
-    setSearchTerm(dynamicSearchTerm);
-    if (dynamicSearchTerm.length < 3) {
+    setSearchTerm(sterm);
+
+    if (sterm.length < 3) {
       setTMDBMovieOptions([]);
       setTMDBTVShowOptions([]);
       setIsSearching(false);
     }
-    const youtubeVideoId = FindYoutubeVideoId(dynamicSearchTerm);
-    const imdbId = getImdbIdFromUrl(dynamicSearchTerm);
+    const youtubeVideoId = FindYoutubeVideoId(sterm);
+    const imdbId = getImdbIdFromUrl(sterm);
     if (youtubeVideoId) {
       setTMDBMovieOptions([]);
       setTMDBTVShowOptions([]);
@@ -74,8 +74,8 @@ const CreatePollPage = () => {
     } else {
       console.log("Options Fetched from API");
       setIsSearching(true);
-      const moviesPromise = TMDBAPI.searchMoviesByTitle(dynamicSearchTerm);
-      const tvShowsPromise = TMDBAPI.searchTVShowsByTitle(dynamicSearchTerm);
+      const moviesPromise = TMDBAPI.searchMoviesByTitle(sterm);
+      const tvShowsPromise = TMDBAPI.searchTVShowsByTitle(sterm);
       const movies = await moviesPromise;
       const tvShows = await tvShowsPromise;
       setTMDBMovieOptions(movies);
@@ -128,7 +128,7 @@ const CreatePollPage = () => {
     addToPoll(`Youtube: ${youtubeTitle}`);
   }
   function addRawToPoll() {
-    addToPoll(dynamicSearchTerm);
+    addToPoll(searchTerm);
   }
 
   return (
@@ -149,16 +149,23 @@ const CreatePollPage = () => {
             className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm text-black font-bold focus:outline-none"
             type="search"
             name="search"
-            value={dynamicSearchTerm}
+            defaultValue={searchTerm}
             placeholder="Search"
-            onChange={(e) => setDynamicSearchTerm(e.target.value)}
+            onBlur={(e) => {
+              e.preventDefault();
+              setSearchTerm(e.target.value);
+              //handleSearch(e.target.value);
+            }}
             onKeyDown={(e) => {
-              e.key === "Enter" && handleSearch();
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSearch(e.currentTarget.value);
+              }
             }}
           />
           <button
             disabled={isSearching}
-            onClick={handleSearch}
+            onClick={() => handleSearch(searchTerm)}
             type="button"
             className="text-white bg-blue-700 disabled:cursor-not-allowed hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
           >
@@ -184,7 +191,7 @@ const CreatePollPage = () => {
             {isSearching ? "Loading..." : "Search"}
           </button>
           <button
-            disabled={dynamicSearchTerm.length === 0 || isSearching}
+            disabled={searchTerm.length === 0 || isSearching}
             onClick={addRawToPoll}
             type="button"
             title="Adds whatever is in the search box directly to the poll"
