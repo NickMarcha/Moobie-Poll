@@ -10,14 +10,26 @@ class TMDBAPI {
   private movieGenres: { id: number; name: string }[] = [];
   private tvShowGenres: { id: number; name: string }[] = [];
 
+  private promises: Promise<any>[] = [];
   private constructor() {}
 
   static async getInstance(): Promise<TMDBAPI> {
+    if (TMDBAPI.instance) {
+      await Promise.all(this.instance.promises);
+    }
+
     if (!TMDBAPI.instance) {
       TMDBAPI.instance = new TMDBAPI();
-      TMDBAPI.instance.movieGenres = await this.getMovieGenres();
-      TMDBAPI.instance.tvShowGenres = await this.getTvShowGenres();
+      const moviePromise = this.getMovieGenres();
+      const tvShowPromise = this.getTvShowGenres();
+
+      this.instance.promises.push(moviePromise);
+      this.instance.promises.push(tvShowPromise);
+
+      TMDBAPI.instance.movieGenres = await moviePromise;
+      TMDBAPI.instance.tvShowGenres = await tvShowPromise;
     }
+
     return TMDBAPI.instance;
   }
 

@@ -11,8 +11,6 @@ export type AddToPollHandle = {
 };
 const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
   (props, ref) => {
-    //Happens so rarely that I don't want to make a new image for it
-    //return <img title="adult:false" src={WidePeepoHHappy} alt="not adult" />;
     useImperativeHandle(ref, () => ({
       addToPoll: (entry: string) => {
         push(entry);

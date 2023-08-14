@@ -118,11 +118,6 @@ const CreatePollPage = () => {
 
       {getCookie("TMDB_API_KEY") && (
         <div>
-          {/* <h1 className="text-4xl">{TMDB_API_KEY.TMDB_API_KEY}</h1> */}
-          {/* <h1 className="">Is Searching: {isSearching ? "True" : "False"}</h1>
-          <h1 className="">Search Term: {searchTerm}</h1>
-          <h1 className="">Movies length: {TMDBMovieOptions.length}</h1>
-          <h1 className="">TV Shows length: {TMDBTVShowOptions.length}</h1> */}
           <h1 className="text-4xl">Search for a Movie or TV Show</h1>
 
           <input

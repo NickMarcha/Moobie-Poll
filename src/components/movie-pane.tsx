@@ -64,7 +64,7 @@ const MoviePane = ({
           <h1 className="text-xl">{movie.release_date}</h1>
           <AdultIcon adult={movie.adult} />
 
-          {movie.genre_ids.map((genre, index) => (
+          {movie.genre_ids?.map((genre, index) => (
             <span>
               {(index > 0 ? ", " : "") +
                 movieGenreList.find(({ id, name }) => {
