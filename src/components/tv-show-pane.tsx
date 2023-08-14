@@ -88,13 +88,9 @@ const TvShowPane = ({
     );
   };
 
-  const FlagIcon: React.FC<{ key: Key; country: string }> = ({
-    key,
-    country,
-  }) => {
+  const FlagIcon: React.FC<{ country: string }> = ({ country }) => {
     return (
       <img
-        key={key}
         className="inline-block h-4 w-4"
         title={country}
         src={getFlagUrl(country)}
@@ -134,7 +130,7 @@ const TvShowPane = ({
             </div>
             <span>
               {tvShow.genre_ids?.map((genre, index) => (
-                <span>
+                <span key={index}>
                   {(index > 0 ? ", " : "") +
                     tvShowGenreList.find(({ id, name }) => {
                       return genre === id;
@@ -147,7 +143,11 @@ const TvShowPane = ({
               {" "}
               Original Country(s):{" "}
               {tvShow.origin_country.map((country, index) => {
-                return <FlagIcon key={index} country={country} />;
+                return (
+                  <span key={index}>
+                    <FlagIcon country={country} />
+                  </span>
+                );
               })}
             </span>
           </div>

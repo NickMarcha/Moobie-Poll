@@ -118,7 +118,7 @@ const MoviePane = ({
             </div>
             <span>
               {movie.genre_ids?.map((genre, index) => (
-                <span>
+                <span key={index}>
                   {(index > 0 ? ", " : "") +
                     movieGenreList.find(({ id, name }) => {
                       return genre === id;

@@ -204,8 +204,8 @@ const LastWatchedButton = ({
             <tbody>
               {lastWatchedData
                 .filter((entry, key) => entry.imdbURL === imdbURL)
-                .map((entry) => (
-                  <tr>
+                .map((entry, key) => (
+                  <tr key={key}>
                     <td className="text-2xl border px-4 py-2">
                       {entry.movieName}
                     </td>
