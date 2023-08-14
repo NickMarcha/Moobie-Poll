@@ -1,4 +1,4 @@
-import WidePeepoHHappy from "../images/widePeepoHappy.png";
+//import WidePeepoHHappy from "../images/widePeepoHappy.png";
 import Coomer from "../images/Coomer.png";
 type adultIconProps = {
   adult: boolean;

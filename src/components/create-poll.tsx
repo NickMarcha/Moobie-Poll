@@ -18,10 +18,9 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
         push(entry);
       },
     }));
-    const { array, set, push, filter, update, remove, clear } =
-      useArray<string>([]);
+    const { array: pollEntries, push, remove } = useArray<string>([]);
     const [pollID, setPollID] = React.useState<string>("");
-    const [countDownDate, setCountDownDate] = React.useState(new Date());
+    //const [countDownDate, setCountDownDate] = React.useState(new Date());
     const [deadline, setDeadline] = React.useState<number | "">(180);
 
     async function createPoll() {
@@ -31,10 +30,13 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
       }
       const newPollID = await StrawPollAPI.createPoll(
         deadline,
-        array.map((entry, index) => ({ id: index.toString(), name: entry }))
+        pollEntries.map((entry, index) => ({
+          id: index.toString(),
+          name: entry,
+        }))
       );
-      const newCountdownDate = new Date(Date.now() + deadline * 1000);
-      setCountDownDate(newCountdownDate);
+      //const newCountdownDate = new Date(Date.now() + deadline * 1000);
+      //setCountDownDate(newCountdownDate);
       setPollID(newPollID);
     }
     const [StrawPoll_API_KEY] = useCookies(["StrawPoll_API_KEY"]);
@@ -75,7 +77,7 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
         </div>
 
         <div className="flex flex-col m-5">
-          {array.map((entry, index) => (
+          {pollEntries.map((entry, index) => (
             <div className="flex flex-row m-1" key={index}>
               <button
                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
@@ -89,11 +91,13 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
         </div>
         <div className="flex flex-row ml-4">
           <button
-            disabled={array.length < 1}
+            disabled={pollEntries.length < 1}
             title="Copy all entries to clipboard"
             className="bg-purple-500 disabled:bg-[#334155] disabled:cursor-not-allowed hover:bg-purple-700  text-white font-bold py-1 px-2 rounded"
             onClick={() => {
-              const value = array.flatMap((entry) => entry + "\n").join("");
+              const value = pollEntries
+                .flatMap((entry) => entry + "\n")
+                .join("");
               sendToClip(value);
             }}
           >
@@ -101,7 +105,7 @@ const CreatePoll = React.forwardRef<AddToPollHandle, createPollProps>(
           </button>
 
           <button
-            disabled={array.length < 2}
+            disabled={pollEntries.length < 2}
             title="Create a Ranked Choice Straw Poll with all entries"
             className="bg-purple-500 disabled:bg-[#334155] disabled:cursor-not-allowed hover:bg-purple-700  text-white font-bold py-1 px-2 rounded"
             onClick={createPoll}

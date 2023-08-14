@@ -17,7 +17,6 @@ const LastWatchedButton = ({
   movie,
   lastWatchedData,
 }: LastWatchedProps) => {
-  const [imdbID, setImdbID] = useState<string>("");
   const [imdbURL, setImdbURL] = useState<string>("");
   const [showDialog, setShowDialog] = useState<boolean>(false);
 
@@ -48,7 +47,7 @@ const LastWatchedButton = ({
         dialog.removeEventListener("click", handleDialogClick);
       };
     }
-  }, [dialogRef]);
+  }, [showDialog]);
 
   useEffect(() => {
     if (showDialog) {
@@ -90,7 +89,6 @@ const LastWatchedButton = ({
       const tvShowID = tvShow.id;
       const newImdbID: any = await TMDBAPI.getTVShowImdbID(tvShowID);
 
-      setImdbID(newImdbID);
       setImdbURL(getImdbURL(newImdbID));
       return;
     }
@@ -99,7 +97,6 @@ const LastWatchedButton = ({
       const movieID = movie.id;
       const newImdbID: any = await TMDBAPI.getMovieImdbID(movieID);
 
-      setImdbID(newImdbID);
       setImdbURL(getImdbURL(newImdbID));
       return;
     }

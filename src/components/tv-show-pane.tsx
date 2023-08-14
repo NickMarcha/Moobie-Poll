@@ -92,7 +92,6 @@ const TvShowPane = ({
     key,
     country,
   }) => {
-    console.log(JSON.stringify(country));
     return (
       <img
         key={key}
@@ -148,7 +147,6 @@ const TvShowPane = ({
               {" "}
               Original Country(s):{" "}
               {tvShow.origin_country.map((country, index) => {
-                console.log(JSON.stringify(country));
                 return <FlagIcon key={index} country={country} />;
               })}
             </span>
