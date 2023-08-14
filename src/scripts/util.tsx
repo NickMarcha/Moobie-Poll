@@ -43,9 +43,20 @@ function sendToClip(str: string) {
 }
 const flagCdnURLStart = "https://flagcdn.com/48x36/";
 const flagCdnURLEnd = ".png";
+const flagLookup: Map<string, string> = new Map<string, string>([
+  ["england", "https://flagcdn.com/48x36/gb-eng.png"],
+  ["wales", "https://flagcdn.com/48x36/gb-wls.png"],
+  ["ww", "https://i.imgur.com/vJXGYCI.png"],
+  ["scotland", "https://flagcdn.com/48x36/gb-sct.png"],
+]);
 
 function getFlagUrl(flagCode: string) {
-  return flagCdnURLStart + flagCode + flagCdnURLEnd;
+  flagCode = flagCode.toLowerCase();
+  if (flagLookup.has(flagCode)) {
+    return flagLookup.get(flagCode);
+  } else {
+    return flagCdnURLStart + flagCode + flagCdnURLEnd;
+  }
 }
 
 async function getYoutubeVideoTitle(videoId: string) {

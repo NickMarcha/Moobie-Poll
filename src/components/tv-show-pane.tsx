@@ -3,8 +3,9 @@ import LastWatchedEntry from "../types/LastWatchedEntry";
 import LastWatchedButton from "./last-watched-button";
 import AdultIcon from "./adult-icon";
 import PlaceHolder from "../images/PlaceHolder.png";
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import TMDBAPI from "../scripts/TMDB";
+import { getFlagUrl } from "../scripts/util";
 type tvtShowPaneProps = {
   tvShow: TvShow;
   lastWatchedData: LastWatchedEntry[];
@@ -87,6 +88,22 @@ const TvShowPane = ({
     );
   };
 
+  const FlagIcon: React.FC<{ key: Key; country: string }> = ({
+    key,
+    country,
+  }) => {
+    console.log(JSON.stringify(country));
+    return (
+      <img
+        key={key}
+        className="inline-block h-4 w-4"
+        title={country}
+        src={getFlagUrl(country)}
+        alt={country}
+      />
+    );
+  };
+
   return (
     <div
       id="panel"
@@ -131,8 +148,8 @@ const TvShowPane = ({
               {" "}
               Original Country(s):{" "}
               {tvShow.origin_country.map((country, index) => {
-                if (index > 0) return ", " + country;
-                return country;
+                console.log(JSON.stringify(country));
+                return <FlagIcon key={index} country={country} />;
               })}
             </span>
           </div>
