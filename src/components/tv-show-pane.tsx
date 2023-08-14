@@ -76,16 +76,14 @@ const TvShowPane = ({
 
   const TMDBDetails = () => {
     return (
-      <>
+      <div className="border-2 border-gray-600 rounded-sm p-1">
         <h1>TMDB Details</h1>
-        <div className="flex-1">
-          <ul>
-            <li>popularity:{tvShow.popularity}</li>
-            <li>average vote:{tvShow.vote_average}</li>
-            <li>vote count:{tvShow.vote_count}</li>
-          </ul>
-        </div>
-      </>
+        <ul>
+          <li>popularity:{tvShow.popularity}</li>
+          <li>average vote:{tvShow.vote_average}</li>
+          <li>vote count:{tvShow.vote_count}</li>
+        </ul>
+      </div>
     );
   };
 
@@ -103,7 +101,7 @@ const TvShowPane = ({
         <div className="flex flex-row justify-between">
           <div className="flex flex-col">
             {/* Title */}
-            <div className="flex-auto inline-flex grow-0">
+            <div className="flex-auto inline-flex grow-0 mt-1 text-gray-300 font-semibold">
               <h1
                 title={"Original Name: " + tvShow.original_name}
                 className="text-2xl"
@@ -138,7 +136,7 @@ const TvShowPane = ({
               })}
             </span>
           </div>
-          <div className="flex flex-col ml-2 border-2 border-gray-600 rounded-sm">
+          <div className="flex flex-col ml-2 ">
             <TMDBDetails />
           </div>
         </div>

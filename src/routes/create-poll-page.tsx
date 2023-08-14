@@ -193,7 +193,9 @@ const CreatePollPage = () => {
           {(TMDBMovieOptions.length > 0 || TMDBTVShowOptions.length > 0) && (
             <div className="flex">
               <div className="flex-1 w-1/2">
-                <h1 className="text-4xl">Movies</h1>
+                <h1 className="text-4xl text-center mt-2 bg-red text-gray-300 font-bold	">
+                  Movies
+                </h1>
                 {TMDBMovieOptions.map((option, key) => (
                   <MoviePane
                     key={key}
@@ -204,7 +206,9 @@ const CreatePollPage = () => {
                 ))}
               </div>
               <div className="flex-1 w-1/2">
-                <h1 className="text-4xl">TV Shows</h1>
+                <h1 className="text-4xl text-center mt-2	text-gray-300 font-bold">
+                  TV Shows
+                </h1>
                 {TMDBTVShowOptions.map((option, key) => (
                   <TvShowPane
                     key={key}
