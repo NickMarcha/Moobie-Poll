@@ -1,5 +1,10 @@
 # Moobie-Poll
 
+Make polls quickly from [TMDB](https://www.themoviedb.org/)(The Movie Database)
+hosted statically with Github Pages [here](https://NickMarcha.github.io/Moobie-Poll). Use the inbuilt [StrawPoll](https://strawpoll.com/) api or copy paste line-by-line entries and use as you see fit.
+
+Also pulls data from youtube links if desired.
+
 ## Available Scripts
 
 In the project directory, you can run:
