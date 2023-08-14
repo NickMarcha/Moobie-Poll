@@ -7,7 +7,11 @@ import TvShow from "../types/TvShow";
 import LastWatchedEntry from "../types/LastWatchedEntry";
 import TMDBAPI from "../scripts/TMDB";
 import { getCookie } from "../scripts/cookieUtils";
-import { FindYoutubeVideoId, getYoutubeVideoTitle } from "../scripts/util";
+import {
+  FindYoutubeVideoId,
+  getImdbIdFromUrl,
+  getYoutubeVideoTitle,
+} from "../scripts/util";
 import CreatePoll, { AddToPollHandle } from "../components/create-poll";
 
 const CreatePollPage = () => {
@@ -24,9 +28,9 @@ const CreatePollPage = () => {
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_LmFyibmM16ZKvUfUNr4J_t_33YDhV3hzk-7vS4kUp7y14Hf6cwVMCDwVU-cjElurZcjWtm-j55R5/pub?gid=0&single=true&output=csv";
   const [lastWatchedData, setLastWatchedData] = React.useState([]);
 
-  const [isSearching, setIsSearching] = React.useState(false);
+  const [isSearching, setIsSearching] = React.useState<boolean>(false);
 
-  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchTerm, setSearchTerm] = React.useState<string>("");
 
   const handleSearch = async () => {
     if (searchTerm.length < 3) {
@@ -35,6 +39,7 @@ const CreatePollPage = () => {
       setIsSearching(false);
     }
     const youtubeVideoId = FindYoutubeVideoId(searchTerm);
+    const imdbId = getImdbIdFromUrl(searchTerm);
     if (youtubeVideoId) {
       setTMDBMovieOptions([]);
       setTMDBTVShowOptions([]);
@@ -44,6 +49,24 @@ const CreatePollPage = () => {
         setYoutubeTitle(youtubeTitle);
       } else {
         setYoutubeTitle("No Title Found");
+      }
+    } else if (imdbId) {
+      console.log(imdbId);
+      const result = await TMDBAPI.searchByImdbID(imdbId);
+      console.log(result);
+      if (result["media_type"] === "tv") {
+        setTMDBMovieOptions([]);
+        setTMDBTVShowOptions([result]);
+        setIsSearching(false);
+      } else if (result["media_type"] === "movie") {
+        setTMDBMovieOptions([result]);
+        setTMDBTVShowOptions([]);
+        setIsSearching(false);
+      } else {
+        setTMDBMovieOptions([]);
+        setTMDBTVShowOptions([]);
+        setIsSearching(false);
+        console.log("Unrecognized media type");
       }
     } else {
       console.log("Options Fetched from API");
@@ -91,13 +114,18 @@ const CreatePollPage = () => {
     }
   }
   function addToPollMovie(movie: Movie) {
-    addToPoll(`Movie: ${movie.title} (${movie.release_date})`);
+    addToPoll(`Movie: ${movie.title} (${movie.release_date.split("-")[0]})`);
   }
   function addToPollTVShow(tvShow: TvShow) {
-    addToPoll(`TV Show: ${tvShow.name} (${tvShow.first_air_date})`);
+    addToPoll(
+      `TV Show: ${tvShow.name} (${tvShow.first_air_date.split("-")[0]})`
+    );
   }
   function addToPollYoutube(youtubeTitle: string) {
     addToPoll(`Youtube: ${youtubeTitle}`);
+  }
+  function addRawToPoll() {
+    addToPoll(searchTerm);
   }
 
   return (
@@ -107,23 +135,18 @@ const CreatePollPage = () => {
           <h1 className="text-4xl">Please set your TMDB API Key</h1>
         </div>
       )}
-      {!getCookie("StrawPoll_API_KEY") && (
-        <div>
-          <h1 className="text-4xl">Please set your StrawPoll API Key</h1>
-        </div>
-      )}
-      {getCookie("StrawPoll_API_KEY") && (
-        <CreatePoll ref={createPollRef}></CreatePoll>
-      )}
+
+      <CreatePoll ref={createPollRef}></CreatePoll>
 
       {getCookie("TMDB_API_KEY") && (
         <div>
           <h1 className="text-4xl">Search for a Movie or TV Show</h1>
 
           <input
-            className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
+            className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm text-black font-bold focus:outline-none"
             type="search"
             name="search"
+            value={searchTerm}
             placeholder="Search"
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => {
@@ -134,7 +157,7 @@ const CreatePollPage = () => {
             disabled={isSearching}
             onClick={handleSearch}
             type="button"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
+            className="text-white bg-blue-700 disabled:cursor-not-allowed hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
           >
             {isSearching && (
               <svg
@@ -156,6 +179,15 @@ const CreatePollPage = () => {
               </svg>
             )}
             {isSearching ? "Loading..." : "Search"}
+          </button>
+          <button
+            disabled={searchTerm.length === 0 || isSearching}
+            onClick={addRawToPoll}
+            type="button"
+            title="Adds whatever is in the search box directly to the poll"
+            className="text-white bg-blue-700 disabled:bg-[#334155] disabled:cursor-not-allowed hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
+          >
+            Add Raw to Poll
           </button>
 
           {(TMDBMovieOptions.length > 0 || TMDBTVShowOptions.length > 0) && (

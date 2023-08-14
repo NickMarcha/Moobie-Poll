@@ -63,4 +63,21 @@ async function getYoutubeVideoTitle(videoId: string) {
   }
 }
 
-export { sendToClip, getFlagUrl, FindYoutubeVideoId, getYoutubeVideoTitle };
+function getImdbIdFromUrl(url: string) {
+  const imdbRegex =
+    /^(?:http:\/\/|https:\/\/)?(?:www\.)?(?:imdb.com\/title\/)?(tt[0-9]*)/gim;
+  const imdbId = Array.from(url.matchAll(imdbRegex));
+  if (imdbId && imdbId[0] && imdbId[0][1]) {
+    return imdbId[0][1];
+  } else {
+    return null;
+  }
+}
+
+export {
+  sendToClip,
+  getFlagUrl,
+  FindYoutubeVideoId,
+  getYoutubeVideoTitle,
+  getImdbIdFromUrl,
+};

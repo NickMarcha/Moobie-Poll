@@ -3,6 +3,8 @@ import LastWatchedEntry from "../types/LastWatchedEntry";
 import TvShow from "../types/TvShow";
 import Movie from "../types/Movie";
 import TMDBAPI from "../scripts/TMDB";
+import Fuse from "fuse.js";
+import * as levenshtein from "fast-levenshtein";
 
 type LastWatchedProps = {
   tvShow?: TvShow;
@@ -105,6 +107,56 @@ const LastWatchedButton = ({
     console.log("No movie or tv show provided");
   };
 
+  function searchMovies(
+    searchTerm: string,
+    imdbArray: LastWatchedEntry[]
+  ): LastWatchedEntry[] {
+    const options = {
+      keys: ["movieName"],
+      threshold: 0.4,
+      includeScore: true,
+    };
+
+    if (!showDialog) {
+      return [];
+    }
+    const fuse = new Fuse(imdbArray, options);
+    const results = fuse.search(searchTerm);
+
+    const matchedMovies = results
+      .filter(
+        (result) => result.score !== null && result.score && result.score < 1.0
+      )
+      .map((result) => result.item);
+
+    const levenshteinMatches = imdbArray.filter((entry) => {
+      const normalizedSearch = searchTerm.toLowerCase();
+      const normalizedTitle = entry.movieName.toLowerCase();
+      const distance = levenshtein.get(normalizedSearch, normalizedTitle);
+
+      // You can adjust the threshold based on your preference
+      return distance <= normalizedSearch.length * 0.3;
+    });
+
+    // Combine the results from both approaches
+    const combinedResults = [...matchedMovies, ...levenshteinMatches];
+    const cleanedResults = combinedResults.filter(
+      (value, index, self) =>
+        index === self.findIndex((t) => t.dateWatched === value.dateWatched)
+    );
+
+    return cleanedResults;
+  }
+  function getName() {
+    if (tvShow) {
+      return tvShow.name;
+    }
+    if (movie) {
+      return movie.title;
+    }
+    return "No movie or tv show provided";
+  }
+
   return (
     <div>
       <button
@@ -116,11 +168,17 @@ const LastWatchedButton = ({
       <dialog
         ref={dialogRef}
         // open={showDialog} Should not be used directly https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog
-        className="z-10 mt-2 bg-green-900 rounded-lg backdrop:bg-opacity-30 backdrop:bg-blue-500"
+        className="z-10 mt-2 text-white p-5 bg-gray-900 rounded-lg backdrop:bg-opacity-30 backdrop:bg-blue-500"
       >
         <div>
           <div className="flex flex-row justify-between">
-            <h1 className="text-5xl">{tvShow ? tvShow.name : movie?.title}</h1>
+            <h1 className="text-5xl">
+              {tvShow ? tvShow.name : movie?.title} (
+              {tvShow
+                ? tvShow.first_air_date.split("-")[0]
+                : movie?.release_date.split("-")[0]}
+              )
+            </h1>
             <div className="flex flex-row justify-between">
               <button
                 className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
@@ -138,6 +196,7 @@ const LastWatchedButton = ({
               </button>
             </div>
           </div>
+          <h1 className="text-3xl">IMDB Url Matches</h1>
           <table className="table-auto">
             <thead>
               <tr>
@@ -158,6 +217,50 @@ const LastWatchedButton = ({
                     </td>
                   </tr>
                 ))}
+            </tbody>
+          </table>
+          <h1 className="text-3xl">Possible Matches</h1>
+          <table className="table-auto">
+            <thead>
+              <tr>
+                <th className="text-3xl border px-4 py-2">Entry Name</th>
+                <th className="text-3xl border px-4 py-2">IMDB</th>
+                <th className="text-3xl border px-4 py-2">TimeStamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              {searchMovies(getName(), lastWatchedData).map((entry, key) => (
+                <tr key={key}>
+                  <td className="text-2xl border px-4 py-2">
+                    {entry.movieName}
+                  </td>
+                  <td className="text-2xl border px-4 py-2">
+                    <button
+                      className={
+                        imdbURL === entry.imdbURL
+                          ? "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                          : "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                      }
+                      title={
+                        imdbURL === entry.imdbURL
+                          ? "Same as above"
+                          : "Different IMDB link"
+                      }
+                      onClick={() =>
+                        window.open(
+                          entry.imdbURL,
+                          tvShow ? tvShow.name : movie?.title
+                        )
+                      }
+                    >
+                      IMDB
+                    </button>
+                  </td>
+                  <td className="text-3xl border px-4 py-2">
+                    {entry.dateWatched}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

@@ -143,6 +143,36 @@ class TMDBAPI {
   static async tvShowGenresList() {
     return (await this.getInstance()).tvShowGenres;
   }
+  static async searchByImdbID(imdbID: string) {
+    try {
+      const response = await axios.get(`${TMDB_BASE_URL}/find/${imdbID}`, {
+        params: {
+          api_key: getCookie("TMDB_API_KEY"),
+          external_source: "imdb_id",
+        },
+      });
+
+      return response.data.movie_results[0] || response.data.tv_results[0];
+    } catch (error) {
+      console.error("Error fetching movie details:", error);
+      return null;
+    }
+  }
+
+  static async checkIfValidAPIKey(apiKey: string): Promise<boolean> {
+    try {
+      const response = await axios.get(`${TMDB_BASE_URL}/movie/550`, {
+        params: {
+          api_key: apiKey,
+        },
+      });
+
+      return response.status === 200;
+    } catch (error) {
+      console.log("Error Fetching API Key", error);
+      return false;
+    }
+  }
 }
 
 export default TMDBAPI;
