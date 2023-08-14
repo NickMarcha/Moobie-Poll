@@ -5,6 +5,7 @@ import AdultIcon from "./adult-icon";
 import TMDBAPI from "../scripts/TMDB";
 import { useEffect, useState } from "react";
 import PlaceHolder from "../images/PlaceHolder.png";
+import TMDBDetails from "./tmdb-details";
 
 type moviePaneProps = {
   movie: Movie;
@@ -77,20 +78,6 @@ const MoviePane = ({
     );
   };
 
-  const TMDBDetails = () => {
-    return (
-      <div className="border-2 border-gray-600 rounded-sm p-1">
-        <h1>TMDB Details</h1>
-
-        <ul>
-          <li>popularity:{movie.popularity}</li>
-          <li>average vote:{movie.vote_average}</li>
-          <li>vote count:{movie.vote_count}</li>
-        </ul>
-      </div>
-    );
-  };
-
   return (
     <div className="flex m-5 border-2 justify-stretch border-rose-500 h-[420px] grow-0">
       {/* Poster */}
@@ -129,7 +116,7 @@ const MoviePane = ({
             <span> Original Language: {movie.original_language}</span>
           </div>
           <div className="flex flex-col ml-2 ">
-            <TMDBDetails />
+            <TMDBDetails movie={movie} />
           </div>
         </div>
         <p className="flex-1 overflow-auto shrink mr-2 p-4 bg-slate-800 rounded-3xl">

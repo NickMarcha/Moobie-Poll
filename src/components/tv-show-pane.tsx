@@ -6,6 +6,7 @@ import PlaceHolder from "../images/PlaceHolder.png";
 import { Key, useEffect, useState } from "react";
 import TMDBAPI from "../scripts/TMDB";
 import { getFlagUrl } from "../scripts/util";
+import TMDBDetails from "./tmdb-details";
 type tvtShowPaneProps = {
   tvShow: TvShow;
   lastWatchedData: LastWatchedEntry[];
@@ -75,19 +76,6 @@ const TvShowPane = ({
     );
   };
 
-  const TMDBDetails = () => {
-    return (
-      <div className="border-2 border-gray-600 rounded-sm p-1">
-        <h1>TMDB Details</h1>
-        <ul>
-          <li>popularity:{tvShow.popularity}</li>
-          <li>average vote:{tvShow.vote_average}</li>
-          <li>vote count:{tvShow.vote_count}</li>
-        </ul>
-      </div>
-    );
-  };
-
   const FlagIcon: React.FC<{ country: string }> = ({ country }) => {
     return (
       <img
@@ -152,7 +140,7 @@ const TvShowPane = ({
             </span>
           </div>
           <div className="flex flex-col ml-2 ">
-            <TMDBDetails />
+            <TMDBDetails tvShow={tvShow} />
           </div>
         </div>
         <p className="flex-1 overflow-auto shrink mr-2 p-4 bg-slate-800 rounded-3xl">

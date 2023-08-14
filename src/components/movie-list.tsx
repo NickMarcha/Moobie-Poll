@@ -15,7 +15,7 @@ const MovieList: React.FC<MovieListProps> = ({
   return (
     <div className="flex-1 w-1/2">
       <h1 className="text-4xl text-center mt-2	text-gray-300 font-bold">
-        TV Shows
+        Movies
       </h1>
       {TMDBMovieOptions.map((option, key) => (
         <MoviePane
