@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import MoviePane from "../components/movie-pane";
-import TvShowPane from "../components/tv-show-pane";
 import Movie from "../types/Movie";
 import TvShow from "../types/TvShow";
 import LastWatchedEntry from "../types/LastWatchedEntry";
@@ -13,6 +11,8 @@ import {
   getYoutubeVideoTitle,
 } from "../scripts/util";
 import CreatePoll, { AddToPollHandle } from "../components/create-poll";
+import TvShowList from "../components/tv-show-list";
+import MovieList from "../components/movie-list";
 
 const CreatePollPage = () => {
   const createPollRef = React.useRef<AddToPollHandle>(null);
@@ -195,32 +195,16 @@ const CreatePollPage = () => {
 
           {(TMDBMovieOptions.length > 0 || TMDBTVShowOptions.length > 0) && (
             <div className="flex">
-              <div className="flex-1 w-1/2">
-                <h1 className="text-4xl text-center mt-2 bg-red text-gray-300 font-bold	">
-                  Movies
-                </h1>
-                {TMDBMovieOptions.map((option, key) => (
-                  <MoviePane
-                    key={key}
-                    movie={option}
-                    lastWatchedData={lastWatchedData}
-                    addToPollHandler={addToPollMovie}
-                  />
-                ))}
-              </div>
-              <div className="flex-1 w-1/2">
-                <h1 className="text-4xl text-center mt-2	text-gray-300 font-bold">
-                  TV Shows
-                </h1>
-                {TMDBTVShowOptions.map((option, key) => (
-                  <TvShowPane
-                    key={key}
-                    tvShow={option}
-                    lastWatchedData={lastWatchedData}
-                    addToPollHandler={addToPollTVShow}
-                  />
-                ))}
-              </div>
+              <MovieList
+                TMDBMovieOptions={TMDBMovieOptions}
+                lastWatchedData={lastWatchedData}
+                addToPollHandler={addToPollMovie}
+              ></MovieList>
+              <TvShowList
+                TMDBTVShowOptions={TMDBTVShowOptions}
+                lastWatchedData={lastWatchedData}
+                addToPollHandler={addToPollTVShow}
+              ></TvShowList>
             </div>
           )}
 
