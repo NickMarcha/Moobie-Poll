@@ -226,38 +226,44 @@ const LastWatchedButton = ({
               </tr>
             </thead>
             <tbody>
-              {searchMovies(getName(), lastWatchedData).map((entry, key) => (
-                <tr key={key}>
-                  <td className="text-2xl border px-4 py-2">
-                    {entry.movieName}
-                  </td>
-                  <td className="text-2xl border px-4 py-2">
-                    <button
-                      className={
-                        imdbURL === entry.imdbURL
-                          ? "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
-                          : "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                      }
-                      title={
-                        imdbURL === entry.imdbURL
-                          ? "Same as above"
-                          : "Different IMDB link"
-                      }
-                      onClick={() =>
-                        window.open(
-                          entry.imdbURL,
-                          tvShow ? tvShow.name : movie?.title
-                        )
-                      }
-                    >
-                      IMDB
-                    </button>
-                  </td>
-                  <td className="text-3xl border px-4 py-2">
-                    {entry.dateWatched}
-                  </td>
-                </tr>
-              ))}
+              {searchMovies(getName(), lastWatchedData)
+                .sort(
+                  (a, b) =>
+                    new Date(b.dateWatched).valueOf() -
+                    new Date(a.dateWatched).valueOf()
+                )
+                .map((entry, key) => (
+                  <tr key={key}>
+                    <td className="text-2xl border px-4 py-2">
+                      {entry.movieName}
+                    </td>
+                    <td className="text-2xl border px-4 py-2">
+                      <button
+                        className={
+                          imdbURL === entry.imdbURL
+                            ? "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                            : "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        }
+                        title={
+                          imdbURL === entry.imdbURL
+                            ? "Same as above"
+                            : "Different IMDB link"
+                        }
+                        onClick={() =>
+                          window.open(
+                            entry.imdbURL,
+                            tvShow ? tvShow.name : movie?.title
+                          )
+                        }
+                      >
+                        IMDB
+                      </button>
+                    </td>
+                    <td className="text-3xl border px-4 py-2">
+                      {entry.dateWatched}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
